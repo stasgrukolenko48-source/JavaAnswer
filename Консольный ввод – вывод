@@ -1,0 +1,21 @@
+import java.util.Scanner; // импортируем класс Scanner из стандартной библиотеки
+
+public class Main {
+    public static void main(String[] args) {
+        // создаем объект Scanner для чтения из стандартного потока ввода (консоли)
+        Scanner scan = new Scanner(System.in);
+        
+        // выводим подсказку для пользователя (без ln на конце, чтобы ввод был на той же строке)
+        System.out.print("Введите имя: ");
+        
+        // считываем введенную строку
+        // метод nextLine() считывает всю строку целиком до нажатия Enter
+        String name = scan.nextLine();
+        
+        // выводим результат, склеивая (конкатенируя) строки
+        System.out.println("Привет, " + name);
+        
+        // хорошая практика в Java: всегда закрывать ресурсы, когда они больше не нужны
+        scan.close();
+    }
+}
