@@ -1,0 +1,98 @@
+ПРАКТИКА 1
+/**
+ * Демонстрация поддерживаемых типов данных в операторе switch.
+ * Практика #1.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class SwitchTypesDemo {
+
+    /**
+     * Перечисление для демонстрации работы switch с enum.
+     */
+    enum Day {
+        MONDAY, FRIDAY, SUNDAY
+    }
+
+    /**
+     * Точка входа в программу.
+     *
+     * @param args параметры командной строки
+     */
+    public static void main(String[] args) {
+
+        // 1. Примитивный тип (например, int)
+        int primitiveInt = 2;
+        switch (primitiveInt) {
+            case 1: System.out.println("Один"); break;
+            case 2: System.out.println("Примитив: Два"); break;
+            default: System.out.println("Другое");
+        }
+
+        // 2. Класс-обертка (например, Character)
+        Character wrapperChar = 'A';
+        switch (wrapperChar) {
+            case 'A': System.out.println("Обертка: Буква А"); break;
+            case 'B': System.out.println("Буква B"); break;
+            default: System.out.println("Другая буква");
+        }
+
+        // 3. Перечисление (enum)
+        Day today = Day.FRIDAY;
+        switch (today) {
+            case MONDAY: System.out.println("Тяжелый день"); break;
+            case FRIDAY: System.out.println("Enum: Ура, пятница!"); break;
+            case SUNDAY: System.out.println("Выходной"); break;
+        }
+
+        // 4. Строка (String) - доступно с Java 7
+        String command = "start";
+        switch (command) {
+            case "start": System.out.println("String: Запуск системы"); break;
+            case "stop": System.out.println("Остановка системы"); break;
+            default: System.out.println("Неизвестная команда");
+        }
+    }
+}
+ПРАКТИКА 2
+/**
+ * Демонстрация эффекта "проваливания" (fall-through) при отсутствии break.
+ * Практика #2.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class SwitchFallThroughDemo {
+
+    /**
+     * Точка входа в программу.
+     *
+     * @param args параметры командной строки
+     */
+    public static void main(String[] args) {
+        int value = 2;
+        int i = 0;
+
+        switch (value) {
+            case 1:
+                i = 1;
+                System.out.println("Зашли в case 1, i = " + i);
+                break;
+            case 2:
+                i = 2;
+                System.out.println("Зашли в case 2, i = " + i);
+                // ВНИМАНИЕ: Здесь намеренно пропущен break!
+            case 3:
+                i = 3;
+                System.out.println("Провалились в case 3, i = " + i);
+                break;
+            default:
+                i = -1;
+                System.out.println("Сработал default");
+        }
+
+        // Выведет: Итоговое значение i: 3
+        System.out.println("Итоговое значение i: " + i);
+    }
+}
