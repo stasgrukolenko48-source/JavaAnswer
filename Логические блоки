@@ -1,0 +1,4 @@
+static logic
+logic (1) id= 0
+logic (2) id= 1
+ctor id= 100
