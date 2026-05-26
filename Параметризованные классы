@@ -66,7 +66,7 @@ public class WildcardsDemo {
             System.out.println("Читаем животное: " + a.getClass().getSimpleName());
         }
         
-        // ❌ ОШИБКА КОМПИЛЯЦИИ:
+        //  ОШИБКА КОМПИЛЯЦИИ:
         // Мы НЕ можем ничего добавить в этот список (кроме null). 
         // Компилятор не знает, что именно это за список: List<Dog> или List<Cat>.
         // Попытка добавить сюда Dog может сломать список котов.
@@ -85,7 +85,7 @@ public class WildcardsDemo {
         dogConsumerList.add(new Corgi()); // Corgi - это тоже Dog, добавлять можно
         System.out.println("Успешно добавили собак в список.");
 
-        // ❌ ОШИБКА:
+        //  ОШИБКА:
         // Мы не можем гарантированно прочитать отсюда Dog. 
         // Если сюда передали List<Animal>, там могут лежать коты.
         // Dog d = dogConsumerList.get(0); // Ошибка
