@@ -1,0 +1,108 @@
+ПРАКТИКА 1
+/**
+ * Демонстрация работы оператора instanceof с generic-классами.
+ * Практика #1.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class InstanceofGenericsDemo {
+
+    /**
+     * Простой параметризованный класс-обертка для примера.
+     * @param <T> тип хранимого значения
+     */
+    static class Wrapper<T> {
+        private T item;
+        public void setItem(T item) { this.item = item; }
+        public T getItem() { return item; }
+    }
+
+    public static void main(String[] args) {
+        Wrapper<Integer> intWrapper = new Wrapper<>();
+        
+        // ОШИБКА КОМПИЛЯЦИИ:
+        // Нельзя проверить конкретный тип <Integer>, так как он стерт.
+        // boolean isIntWrapper = intWrapper instanceof Wrapper<Integer>; 
+
+        // ПРАВИЛЬНЫЙ ВАРИАНТ 1: Использование wildcard <?> (рекомендуется)
+        // Мы проверяем, является ли объект "какой-то оберткой".
+        boolean isAnyWrapper = intWrapper instanceof Wrapper<?>;
+        System.out.println("Является ли объект Wrapper<?>: " + isAnyWrapper);
+
+        // ПРАВИЛЬНЫЙ ВАРИАНТ 2: Использование raw type (сырого типа)
+        // Работает так же, но считается устаревшим подходом со времен Java 5.
+        boolean isRawWrapper = intWrapper instanceof Wrapper;
+        System.out.println("Является ли объект raw Wrapper: " + isRawWrapper);
+    }
+}
+ПРАКТИКА 2
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Демонстрация использования ограничений wildcard (extends и super).
+ * Практика #2.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class WildcardsDemo {
+
+    // Иерархия классов
+    static class Animal {}
+    static class Dog extends Animal {}
+    static class Corgi extends Dog {}
+
+    // =========================================================
+    // 1. Использование <? extends T> (Верхняя граница / Producer)
+    // =========================================================
+    /**
+     * Метод принимает список объектов типа Animal или ЛЮБЫХ его наследников.
+     * ЗАЧЕМ НУЖНО: Позволяет безопасно ЧИТАТЬ данные из списков-наследников.
+     */
+    public static void readAnimals(List<? extends Animal> animals) {
+        for (Animal a : animals) {
+            System.out.println("Читаем животное: " + a.getClass().getSimpleName());
+        }
+        
+        // ❌ ОШИБКА КОМПИЛЯЦИИ:
+        // Мы НЕ можем ничего добавить в этот список (кроме null). 
+        // Компилятор не знает, что именно это за список: List<Dog> или List<Cat>.
+        // Попытка добавить сюда Dog может сломать список котов.
+        // animals.add(new Dog()); 
+    }
+
+    // =========================================================
+    // 2. Использование <? super T> (Нижняя граница / Consumer)
+    // =========================================================
+    /**
+     * Метод принимает список объектов типа Dog или ЛЮБЫХ его предков (Animal, Object).
+     * ЗАЧЕМ НУЖНО: Позволяет безопасно ДОБАВЛЯТЬ собак в более общие коллекции.
+     */
+    public static void addDogs(List<? super Dog> dogConsumerList) {
+        dogConsumerList.add(new Dog());
+        dogConsumerList.add(new Corgi()); // Corgi - это тоже Dog, добавлять можно
+        System.out.println("Успешно добавили собак в список.");
+
+        // ❌ ОШИБКА:
+        // Мы не можем гарантированно прочитать отсюда Dog. 
+        // Если сюда передали List<Animal>, там могут лежать коты.
+        // Dog d = dogConsumerList.get(0); // Ошибка
+        // Безопасно можно прочитать только тип Object.
+    }
+
+    public static void main(String[] args) {
+        List<Animal> animals = new ArrayList<>();
+        List<Dog> dogs = new ArrayList<>();
+
+        // Тестируем extends (чтение)
+        dogs.add(new Dog());
+        readAnimals(dogs);    // Работает, так как Dog extends Animal
+        readAnimals(animals); // Работает, так как Animal "extends" Animal
+
+        // Тестируем super (запись)
+        addDogs(dogs);    // Работает: список ожидает Dog
+        addDogs(animals); // Работает: список ожидает предка Dog, мы можем положить туда собаку
+    }
+}
