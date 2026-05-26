@@ -1,1 +1,96 @@
-сс
+ПРАКТИКА 1
+public class Practice1 {
+    // Объявляем переменные как поля класса, чтобы показать их дефолтные значения
+    static byte b;
+    static short s;
+    static int i;
+    static long l;
+    static float f;
+    static double d;
+    static char c;
+    static boolean bool;
+
+    public static void main(String[] args) {
+        System.out.println("byte: " + b);           // 0
+        System.out.println("short: " + s);          // 0
+        System.out.println("int: " + i);            // 0
+        System.out.println("long: " + l);           // 0
+        System.out.println("float: " + f);          // 0.0
+        System.out.println("double: " + d);         // 0.0
+        System.out.println("char: [" + c + "]");    // '\u0000' (пустой символ)
+        System.out.println("boolean: " + bool);     // false
+    }
+}
+
+ПРАКТИКА 2
+public class Practice2 {
+    public static void main(String[] args) {
+        System.out.println("\u0412\u043B\u0430\u0434"); // Выведет: Влад
+    }
+}
+ПРАКТИКА 3
+Ответ: Программа не скомпилируется и выдаст ошибку.
+ПРАКТИКА 4
+public class Practice4 {
+    public static void main(String[] args) {
+        // String + базовый тип (int)
+        int score = 100;
+        String result1 = "Результат: " + score; 
+        System.out.println(result1); // Выведет: Результат: 100
+
+        // String + объект (например, массив или любой другой класс)
+        Object obj = new Object();
+        String result2 = "Мой объект: " + obj;
+        // У объекта неявно вызовется метод .toString()
+        System.out.println(result2); 
+    }
+}
+ПРАКТИКА 5
+int a = 5;
+double b = 2.5;
+double result = a + b; // int неявно расширяется до double
+ПРАКТИКА 6
+public class Practice6 {
+    public static void main(String[] args) {
+        // 1. Отбрасывание дробной части
+        double pi = 3.14159;
+        int intPi = (int) pi; 
+        System.out.println(intPi); // Выведет: 3
+
+        // 2. Отсечение старших битов (число не влезает в диапазон)
+        int largeNumber = 130;
+        byte smallNumber = (byte) largeNumber; 
+        System.out.println(smallNumber); // Выведет: -126 (произошло переполнение)
+    }
+}
+ПРАКТИКА 7
+Практика #7: Задача с подвохом на byte
+Это классический "вопрос на засыпку".
+
+Код, указанный в задании, не скомпилируется, поэтому ни в одной переменной значений не будет.
+Ошибки возникнут на строках:
+byte b = a + 10;
+byte d = a + 1;
+
+Объяснение:
+
+1. a — это переменная типа int. Числа 10 и 1 по умолчанию тоже int.
+
+2. Результат выражения a + 10 имеет тип int.
+
+3. Java запрещает неявно класть int в byte, потому что это сужающее преобразование (возможна потеря данных). Компилятор выдаст ошибку
+
+ПРАКТИКА 8
+public class Practice8 {
+    public static void main(String[] args) {
+        // Вместо длинного: java.util.ArrayList<String> list = new java.util.ArrayList<>();
+        var list = new java.util.ArrayList<String>();
+        list.add("Java");
+        
+        // Вместо: int number = 42;
+        var number = 42; 
+        
+        // Вместо: String text = "Hello";
+        var text = "Hello";
+    }
+}
