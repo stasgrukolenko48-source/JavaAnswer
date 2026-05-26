@@ -1,0 +1,71 @@
+/**
+ * Демонстрация продвинутых возможностей перечислений (enum) в Java.
+ * Покрывает Практику #1 (инициализация) и Практику #2 (собственные методы).
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class EnumAdvancedDemo {
+
+    /**
+     * Перечисление уровней подготовки пловцов.
+     */
+    public enum SwimmerLevel {
+        // 1. ИНИЦИАЛИЗАЦИЯ ЭЛЕМЕНТОВ (Практика #1)
+        // Вызов конструктора для каждой константы
+        BEGINNER("Новичок", 1000), 
+        AMATEUR("Любитель", 2500), 
+        PRO("Профессионал", 5000);
+
+        // Поля класса (хранят данные для каждой константы)
+        private final String rusName;
+        private final int avgDistanceMeters;
+
+        // Конструктор enum всегда неявно private! 
+        // Мы не можем вызвать new SwimmerLevel() извне.
+        SwimmerLevel(String rusName, int avgDistanceMeters) {
+            this.rusName = rusName;
+            this.avgDistanceMeters = avgDistanceMeters;
+        }
+
+        // 2. СОБСТВЕННЫЙ МЕТОД (Практика #2)
+        /**
+         * Рассчитывает примерное количество бассейнов (по 25м) за тренировку.
+         * @return количество бассейнов
+         */
+        public int calculateLaps() {
+            return this.avgDistanceMeters / 25;
+        }
+
+        // Геттеры для доступа к полям
+        public String getRusName() {
+            return rusName;
+        }
+
+        public int getAvgDistanceMeters() {
+            return avgDistanceMeters;
+        }
+    }
+
+    /**
+     * Точка входа для демонстрации работы.
+     */
+    public static void main(String[] args) {
+        // Берем конкретный уровень
+        SwimmerLevel myLevel = SwimmerLevel.AMATEUR;
+
+        // Используем встроенный метод name() и наши собственные геттеры
+        System.out.println("Код уровня: " + myLevel.name());
+        System.out.println("Название: " + myLevel.getRusName());
+        System.out.println("Дистанция за тренировку: " + myLevel.getAvgDistanceMeters() + " м");
+        
+        // Вызываем наш собственный метод
+        System.out.println("Это примерно " + myLevel.calculateLaps() + " бассейнов по 25м.");
+
+        System.out.println("\n--- Все уровни ---");
+        // Встроенный метод values() возвращает массив всех констант
+        for (SwimmerLevel level : SwimmerLevel.values()) {
+            System.out.println(level.getRusName() + " плывет " + level.calculateLaps() + " бассейнов.");
+        }
+    }
+}
