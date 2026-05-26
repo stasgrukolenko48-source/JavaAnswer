@@ -1,0 +1,90 @@
+ПРАКТИКА 1
+/**
+ * Демонстрация работы метода decode() для класса Integer.
+ * Практика #1.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class DecodeDemo {
+    public static void main(String[] args) {
+        // Декодируем стандартное десятичное число
+        Integer decimalValue = Integer.decode("125");
+        System.out.println("Десятичное (125): " + decimalValue);
+
+        // Декодируем шестнадцатеричное число (префикс 0x)
+        Integer hexValue = Integer.decode("0xFF");
+        System.out.println("Шестнадцатеричное (0xFF): " + hexValue); // Выведет 255
+
+        // Декодируем восьмеричное число (префикс 0)
+        Integer octalValue = Integer.decode("010");
+        System.out.println("Восьмеричное (010): " + octalValue); // Выведет 8
+    }
+}
+ПРАКТИКА 2
+/**
+ * Демонстрация способов создания объектов типа Boolean.
+ * Практика #2.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class BooleanCreation {
+    public static void main(String[] args) {
+        // Способ 1: Автоупаковка (Autoboxing) базового типа boolean
+        Boolean bool1 = true;
+
+        // Способ 2: Использование статического метода valueOf() с примитивом
+        Boolean bool2 = Boolean.valueOf(false);
+
+        // Способ 3: Использование valueOf() со строкой
+        // Вернет true только если строка равна "true" (без учета регистра)
+        Boolean bool3 = Boolean.valueOf("TrUe");
+        
+        // Способ 4: Использование статических констант класса Boolean
+        Boolean bool4 = Boolean.TRUE;
+        Boolean bool5 = Boolean.FALSE;
+        
+        // Метод parseBoolean возвращает примитив (boolean), 
+        // но благодаря автоупаковке мы можем присвоить его объекту Boolean
+        Boolean bool6 = Boolean.parseBoolean("true");
+    }
+}
+ПРАКТИКА 3
+/**
+ * Демонстрация возникновения NullPointerException при автораспаковке.
+ * Практика #3.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class UnboxingNPEDemo {
+    public static void main(String[] args) {
+        // Создаем объект-обертку, но не инициализируем его значением,
+        // поэтому переменная хранит null.
+        Integer wrapperObject = null;
+
+        try {
+            // АВТОРАСПАКОВКА: попытка присвоить null-объект в примитив.
+            // Под капотом Java делает: int primitiveInt = wrapperObject.intValue();
+            // Так как wrapperObject == null, вызов .intValue() бросит исключение.
+            int primitiveInt = wrapperObject; 
+        } catch (NullPointerException e) {
+            System.out.println("Поймали NullPointerException при автораспаковке!");
+        }
+    }
+}
+ПРАКТИКА 4
+a1==i1 true
+b1==i1 true
+a1==b1 false   <-- Внимание сюда!
+a1.equals(i1) -> true
+b1.equals(i1) -> true
+a1.equals(b1) -> true
+
+a2==i2 true
+b2==i2 true
+a2==b2 true    <-- А здесь true!
+a2.equals(i2) -> true
+b2.equals(i2) -> true
+a2.equals(b2) -> true
