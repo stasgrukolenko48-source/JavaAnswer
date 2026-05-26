@@ -1,0 +1,110 @@
+ПРАКТИКА 1
+/**
+ * Класс для демонстрации работы различных операторов в Java.
+ * Практика #1.
+ * * @author Влад
+ * @version 1.0
+ */
+public class OperatorsDemo {
+
+    /**
+     * Точка входа в программу.
+     * * @param args параметры командной строки
+     */
+    public static void main(String[] args) {
+        
+        /* 1. Арифметические операторы и присваивание */
+        int a = 10;
+        int b = 3;
+        System.out.println("Сложение: " + (a + b)); // 13
+        System.out.println("Остаток от деления: " + (a % b)); // 1
+        
+        a += 5; // Эквивалентно a = a + 5
+        System.out.println("Составное присваивание (a += 5): " + a); // 15
+
+        /* 2. Операторы со строками (String) */
+        String str1 = "Java";
+        String str2 = " Рулит";
+        str1 += str2; // Конкатенация с присваиванием
+        System.out.println("Строки: " + str1); // "Java Рулит"
+        System.out.println("Сравнение строк по ссылке: " + (str1 == str2)); // false
+
+        /* 3. Префиксная и постфиксная формы (++ и --) */
+        int x = 5;
+        // Постфиксная: сначала значение отдается, потом увеличивается
+        System.out.println("Постфиксный ++: " + (x++)); // Выведет 5, затем x станет 6
+        
+        int y = 5;
+        // Префиксная: сначала значение увеличивается, потом отдается
+        System.out.println("Префиксный ++: " + (++y)); // Выведет 6, y уже 6
+
+        /* 4. Операторы сравнения и логические операторы */
+        boolean isGreater = (10 > 5) && (5 <= 5); // Логическое И (&&)
+        boolean isNotEqual = (10 != 5) || (2 == 3); // Логическое ИЛИ (||)
+        System.out.println("Логическое И: " + isGreater); // true
+        System.out.println("Отрицание (!): " + !isGreater); // false
+
+        /* 5. Побитовые операторы (работают на уровне битов числа) */
+        int bit1 = 5;  // В двоичной: 0101
+        int bit2 = 3;  // В двоичной: 0011
+        System.out.println("Побитовое И (&): " + (bit1 & bit2));   // 0001 (т.е. 1)
+        System.out.println("Побитовое ИЛИ (|): " + (bit1 | bit2)); // 0111 (т.е. 7)
+        System.out.println("Побитовое ИСКЛ. ИЛИ (^): " + (bit1 ^ bit2)); // 0110 (т.е. 6)
+        System.out.println("Побитовое отрицание (~): " + (~bit1)); // Инверсия всех битов
+
+        /* 6. Битовые сдвиги */
+        int shift = 8; // В двоичной: 1000
+        System.out.println("Сдвиг вправо (>>): " + (shift >> 1));  // 0100 (т.е. 4)
+        System.out.println("Сдвиг влево (<<): " + (shift << 1));   // 10000 (т.е. 16)
+        // >>> - беззнаковый сдвиг вправо (заполняет старшие биты нулями, игнорируя знак)
+        System.out.println("Беззнаковый сдвиг (>>>): " + (-8 >>> 1)); 
+
+        /* 7. Тернарный оператор (условие ? если_true : если_false) */
+        int age = 20;
+        String status = (age >= 18) ? "Взрослый" : "Ребенок";
+        System.out.println("Тернарный оператор: " + status);
+
+        /* 8. Скобки () и доступ к массиву [] */
+        int[] arr = {10, 20, 30};
+        int result = (arr[0] + arr[1]) * 2; // Меняем приоритет скобками
+        System.out.println("Массивы и скобки: " + result); // 60
+    }
+}
+ПРАКТИКА 2
+/**
+ * Класс для демонстрации работы оператора instanceof.
+ * Практика #2.
+ * * @author Влад
+ * @version 1.0
+ */
+public class InstanceofDemo {
+
+    /**
+     * Точка входа в программу.
+     * * @param args параметры командной строки
+     */
+    public static void main(String[] args) {
+        
+        // Создаем объект типа String
+        String text = "Тестовая строка";
+        
+        // 1. Проверка точного совпадения типа
+        boolean isString = text instanceof String;
+        System.out.println("text является String? " + isString); // true
+        
+        // 2. Проверка на принадлежность к базовому классу
+        // В Java абсолютно все классы неявно наследуются от класса Object
+        boolean isObject = text instanceof Object;
+        System.out.println("text является Object? " + isObject); // true
+
+        // 3. Применение instanceof к null-объекту
+        String emptyString = null;
+        boolean isNullString = emptyString instanceof String;
+        boolean isNullObject = emptyString instanceof Object;
+        
+        // Любая проверка null через instanceof всегда дает false!
+        // Это защищает программу от ошибки NullPointerException
+        System.out.println("null является String? " + isNullString); // false
+        System.out.println("null является Object? " + isNullObject); // false
+    }
+}
