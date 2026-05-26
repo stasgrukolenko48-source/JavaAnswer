@@ -1,0 +1,71 @@
+/**
+ * Класс, хранящий данные с разными уровнями доступа.
+ * Практика #1.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class BankAccount {
+
+    // 1. public - доступно из любой точки программы
+    public String ownerName = "Влад";
+
+    // 2. protected - доступно внутри этого пакета И во всех классах-наследниках (даже в других пакетах)
+    protected double bonusPoints = 500.0;
+
+    // 3. по умолчанию (без спецификатора) - доступно ТОЛЬКО внутри текущего пакета
+    String currency = "RUB"; 
+
+    // 4. private - доступно ТОЛЬКО внутри этого конкретного класса
+    private double balance = 10000.0;
+
+    /**
+     * Внутри самого класса мы имеем доступ абсолютно ко всем полям.
+     */
+    public void printAccountInfo() {
+        System.out.println(ownerName + ", " + bonusPoints + ", " + currency + ", " + balance);
+    }
+}
+
+// ===================================================================================
+// Представим, что следующий класс находится В ТОМ ЖЕ ПАКЕТЕ, что и BankAccount
+// ===================================================================================
+
+/**
+ * Класс для проверки доступа из того же пакета.
+ */
+class SamePackageChecker {
+    
+    public void checkAccess() {
+        BankAccount account = new BankAccount();
+
+        System.out.println(account.ownerName);   //  РАЗРЕШЕНО (public)
+        System.out.println(account.bonusPoints); //  РАЗРЕШЕНО (protected работает внутри пакета)
+        System.out.println(account.currency);    //  РАЗРЕШЕНО (default работает внутри пакета)
+        
+        // System.out.println(account.balance);  //  ОШИБКА: balance имеет private доступ
+    }
+}
+
+// ===================================================================================
+// Представим, что следующий класс находится В ДРУГОМ ПАКЕТЕ, но наследуется от BankAccount
+// ===================================================================================
+
+/**
+ * Класс-наследник, находящийся в другой части программы (в другом пакете).
+ */
+class DifferentPackageSubclass extends BankAccount {
+
+    public void checkInheritedAccess() {
+        System.out.println(this.ownerName);   //  РАЗРЕШЕНО (public доступен везде)
+        
+        // Вот главная фишка protected! Мы в другом пакете, но так как мы наследники, доступ есть:
+        System.out.println(this.bonusPoints); //  РАЗРЕШЕНО (protected доступен наследникам)
+
+        //  ОШИБКА: currency без спецификатора. Он не передается по наследству в другие пакеты.
+        // System.out.println(this.currency); 
+
+        // ОШИБКА: private не виден даже прямым наследникам.
+        // System.out.println(this.balance);  
+    }
+}
