@@ -1,0 +1,50 @@
+Практика 3
+InputStream и OutputStream — это байтовые потоки. Они читают и пишут данные сырыми кусками по 8 бит (1 байт). Они идеально подходят для работы с бинарными файлами: картинками, музыкой, видео, архивами или скомпилированными .class файлами.
+
+Reader и Writer — это символьные потоки. Они созданы специально для работы с текстом.
+Практика 1,2,4
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+/**
+ * Демонстрация работы InputStream, OutputStream и интерфейса AutoCloseable.
+ * Практики #1, #2 и #4.
+ */
+public class ByteStreamDemo {
+
+    public static void main(String[] args) {
+        
+        String sourceFile = "input.txt";
+        String destFile = "output.txt";
+
+        // Демонстрация try-with-resources (Практика #4).
+        // FileInputStream и FileOutputStream реализуют интерфейс AutoCloseable.
+        // Поэтому мы объявляем их в круглых скобках после try. 
+        // Нам больше не нужен блок finally для их закрытия — Java сделает это сама.
+        try (
+            FileInputStream inStream = new FileInputStream(sourceFile);
+            FileOutputStream outStream = new FileOutputStream(destFile)
+        ) {
+            
+            int byteData;
+            
+            // Практика #1: использование метода read()
+            // Метод read() читает ровно ОДИН байт из файла и возвращает его в виде числа (0-255).
+            // Если достигнут конец файла, метод возвращает -1.
+            while ((byteData = inStream.read()) != -1) {
+                
+                // Практика #2: использование метода write(int)
+                // Метод write принимает число (наш прочитанный байт) и записывает его в новый файл.
+                outStream.write(byteData);
+            }
+            
+            System.out.println("Файл успешно скопирован побайтово!");
+
+        } catch (IOException e) {
+            // Если файл не найден или нет прав на запись, мы перехватим ошибку
+            System.out.println("Ошибка при работе с файлами: " + e.getMessage());
+        }
+    }
+}
