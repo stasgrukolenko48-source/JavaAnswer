@@ -1,0 +1,73 @@
+import java.util.Objects;
+
+/**
+ * Класс, демонстрирующий правильное переопределение метода equals().
+ * Практика #1.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public class Book {
+
+    private String isbn;  // Уникальный номер книги
+    private String title; // Название книги
+
+    public Book(String isbn, String title) {
+        this.isbn = isbn;
+        this.title = title;
+    }
+
+    /**
+     * Переопределенный метод для логического сравнения двух книг.
+     * Две книги считаются одинаковыми, если у них совпадают ISBN и название.
+     *
+     * @param obj объект для сравнения с текущей книгой
+     * @return true, если объекты логически равны, иначе false
+     */
+    @Override
+    public boolean equals(Object obj) {
+        // Шаг 1: Проверка на рефлексивность (сравнение ссылок). 
+        // Это быстрая проверка: если ссылки одинаковые, это один и тот же объект.
+        if (this == obj) {
+            return true;
+        }
+
+        // Шаг 2: Проверка на null и точное совпадение классов.
+        // Если передан null или объекты разных классов (например, Book и String), они не равны.
+        // Это также закрывает требование "Сравнение с null".
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        // Шаг 3: Приведение типа (каст). 
+        // Теперь мы точно знаем, что obj - это Book, и можем безопасно привести тип.
+        Book otherBook = (Book) obj;
+
+        // Шаг 4: Сравнение значимых полей.
+        // Используем утилитарный метод Objects.equals(), так как он безопасно 
+        // сравнивает строки, даже если одна из них равна null.
+        return Objects.equals(this.isbn, otherBook.isbn) &&
+               Objects.equals(this.title, otherBook.title);
+    }
+
+    /**
+     * ВАЖНОЕ ПРАВИЛО: Если переопределяешь equals, обязан переопределить и hashCode!
+     * Иначе объекты будут некорректно работать в коллекциях типа HashSet или HashMap.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(isbn, title);
+    }
+
+    public static void main(String[] args) {
+        Book book1 = new Book("12345", "Java Core");
+        Book book2 = new Book("12345", "Java Core");
+        Book book3 = new Book("99999", "Сказки");
+
+        // Проверяем работу нашего метода
+        System.out.println("book1.equals(book1): " + book1.equals(book1)); // true (Рефлексивность)
+        System.out.println("book1.equals(book2): " + book1.equals(book2)); // true (Логическое равенство)
+        System.out.println("book1.equals(book3): " + book1.equals(book3)); // false (Разные данные)
+        System.out.println("book1.equals(null): " + book1.equals(null));   // false (Сравнение с null)
+    }
+}
