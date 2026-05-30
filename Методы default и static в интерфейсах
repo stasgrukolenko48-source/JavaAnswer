@@ -1,0 +1,100 @@
+/**
+ * Практика #1. Демонстрация default и static методов.
+ */
+public interface TrainingProtocol {
+
+    // 1. Абстрактный метод (классический)
+    void startMainWorkout();
+
+    // 2. Неабстрактный (default) метод. 
+    // Имеет готовую реализацию прямо в интерфейсе.
+    default void doWarmUp() {
+        System.out.println("Стандартная разминка: 400м вольным стилем.");
+    }
+
+    // 3. Статический метод.
+    // Принадлежит интерфейсу, содержит общую служебную логику.
+    static void printSafetyRules() {
+        System.out.println("Правило: Движение по дорожке всегда против часовой стрелки.");
+    }
+}
+
+/**
+ * Класс-реализация.
+ */
+class Swimmer implements TrainingProtocol {
+
+    // Мы ОБЯЗАНЫ реализовать только абстрактный метод
+    @Override
+    public void startMainWorkout() {
+        System.out.println("Основная тренировка: 10х100м комплексным плаванием.");
+    }
+
+    // Метод doWarmUp() мы можем переопределить, а можем оставить как есть.
+    // В данном случае мы его не трогаем, используя "дефолтную" реализацию.
+}
+
+/**
+ * Точка входа для демонстрации вызовов.
+ */
+class MainProtocol {
+    public static void main(String[] args) {
+        
+        // ВЫЗОВ СТАТИЧЕСКОГО МЕТОДА:
+        // Вызывается строго через ИмяИнтерфейса.метод()
+        TrainingProtocol.printSafetyRules();
+
+        Swimmer swimmer = new Swimmer();
+        
+        // ВЫЗОВ DEFAULT МЕТОДА:
+        // Вызывается у конкретного объекта, как обычный метод класса.
+        swimmer.doWarmUp(); 
+        
+        swimmer.startMainWorkout();
+    }
+}
+ПРАКТИКА 2
+Возникнет ошибка компиляции: class inherits unrelated defaults for method...
+Класс, реализующий оба интерфейса, обязан переопределить этот конфликтный метод. Внутри переопределенного метода можно написать свою логику либо явно указать, default реализацию какого именно интерфейса мы хотим использовать (с помощью конструкции ИмяИнтерфейса.super.метод()).
+
+ 
+interface Cardio {
+    default void coolDown() {
+        System.out.println("Заминка кардио: легкое плавание 200м.");
+    }
+}
+
+interface Strength {
+    default void coolDown() {
+        System.out.println("Заминка силовых: растяжка мышц в зале 10 минут.");
+    }
+}
+
+/**
+ * Класс реализует оба интерфейса, у которых совпадает default метод coolDown().
+ */
+class Triathlete implements Cardio, Strength {
+
+    // Мы ОБЯЗАНЫ переопределить конфликтный метод, иначе код не скомпилируется.
+    @Override
+    public void coolDown() {
+        
+        System.out.println("Начинаем комплексную заминку...");
+
+        // Мы можем явно вызвать default метод из интерфейса Cardio
+        Cardio.super.coolDown();
+
+        // Мы можем явно вызвать default метод из интерфейса Strength
+        Strength.super.coolDown();
+        
+        // Или вообще проигнорировать их оба и написать что-то свое:
+        // System.out.println("Идем в сауну.");
+    }
+}
+
+class MainConflict {
+    public static void main(String[] args) {
+        Triathlete athlete = new Triathlete();
+        athlete.coolDown();
+    }
+}
