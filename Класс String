@@ -1,0 +1,91 @@
+/**
+ * Демонстрация 10 популярных методов класса String.
+ * Практика #1.
+ *
+ * @author Влад
+ */
+public class StringMethodsDemo {
+
+    public static void main(String[] args) {
+        String data = "   Иванов Иван, 25m freestyle, 14.5s   ";
+
+        // 1. trim() - удаляет пробелы в начале и в конце строки.
+        // Очень полезно при чтении данных, введенных пользователем.
+        String cleanData = data.trim(); 
+        System.out.println("1. trim(): '" + cleanData + "'");
+
+        // 2. toUpperCase() - переводит все символы в верхний регистр.
+        System.out.println("2. toUpperCase(): " + cleanData.toUpperCase());
+
+        // 3. toLowerCase() - переводит все символы в нижний регистр.
+        System.out.println("3. toLowerCase(): " + cleanData.toLowerCase());
+
+        // 4. length() - возвращает количество символов в строке.
+        System.out.println("4. length(): " + cleanData.length());
+
+        // 5. contains(CharSequence s) - проверяет, содержит ли строка указанную подстроку.
+        boolean hasFreestyle = cleanData.contains("freestyle");
+        System.out.println("5. contains('freestyle'): " + hasFreestyle);
+
+        // 6. startsWith(String prefix) - проверяет, начинается ли строка с указанного префикса.
+        boolean isIvanov = cleanData.startsWith("Иванов");
+        System.out.println("6. startsWith('Иванов'): " + isIvanov);
+
+        // 7. replace(target, replacement) - заменяет все вхождения одной подстроки на другую.
+        String translated = cleanData.replace("freestyle", "вольный стиль");
+        System.out.println("7. replace(): " + translated);
+
+        // 8. substring(int beginIndex, int endIndex) - вырезает часть строки.
+        // endIndex не включается в результат (от 0 до 11 символа).
+        String nameOnly = cleanData.substring(0, 11);
+        System.out.println("8. substring(0, 11): " + nameOnly);
+
+        // 9. charAt(int index) - возвращает один символ по указанному индексу.
+        char firstLetter = cleanData.charAt(0);
+        System.out.println("9. charAt(0): " + firstLetter);
+
+        // 10. split(String regex) - разбивает строку на массив строк по указанному разделителю.
+        String[] parts = cleanData.split(", ");
+        System.out.println("10. split(', '):");
+        for (int i = 0; i < parts.length; i++) {
+            System.out.println("   Часть " + (i + 1) + ": " + parts[i]);
+        }
+    }
+}
+
+
+import java.util.StringJoiner;
+
+/**
+ * Демонстрация работы со StringJoiner.
+ * Практика #2.
+ */
+public class StringJoinerDemo {
+
+    public static void main(String[] args) {
+        
+        // Пример 1: Простое склеивание через запятую с пробелом
+        StringJoiner styles = new StringJoiner(", ");
+        styles.add("Баттерфляй");
+        styles.add("На спине");
+        styles.add("Брасс");
+        styles.add("Кроль");
+        
+        System.out.println("Порядок комплексного плавания: " + styles.toString());
+
+        // Пример 2: Склеивание с разделителем, префиксом и суффиксом.
+        // Идеально подходит для форматирования списков, массивов или JSON.
+        StringJoiner team = new StringJoiner("; ", "[Эстафета 4x50: ", "]");
+        team.add("Смирнов")
+            .add("Петров")
+            .add("Соколов")
+            .add("Волков"); // Можно использовать цепочку вызовов (method chaining)
+
+        System.out.println(team.toString());
+        // Вывод: [Эстафета 4x50: Смирнов; Петров; Соколов; Волков]
+    }
+}
+
+ПРАКТИКА 3
+Упростить написание многострочного текста.
+До появления текстовых блоков, если тебе нужно было сохранить кусок HTML, JSON, SQL-запрос или просто длинный форматированный текст, приходилось в конце каждой строки писать \n и склеивать всё плюсами +. Это делало код нечитаемым.
