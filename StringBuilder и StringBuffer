@@ -1,0 +1,95 @@
+/**
+ * Демонстрация 10 основных методов класса StringBuilder (и StringBuffer).
+ * Практика #1.
+ *
+ * @author Влад
+ */
+public class BuilderDemo {
+
+    public static void main(String[] args) {
+        
+        // Создаем пустой объект (по умолчанию внутри создается массив на 16 символов)
+        StringBuilder plan = new StringBuilder();
+
+        // 1. append() - добавляет строку, число или символ В КОНЕЦ.
+        // Это самый главный и часто используемый метод.
+        plan.append("Тренировка: ");
+        plan.append(400);
+        plan.append("м кроль");
+
+        // 2. insert(offset, str) - вставляет подстроку по указанному индексу, 
+        // раздвигая существующий текст.
+        plan.insert(12, "разминка, ");
+
+        // 3. replace(start, end, str) - заменяет кусок текста на новый.
+        // endIndex не включается.
+        plan.replace(22, 25, "100"); // меняем "400" на "100"
+
+        // 4. delete(start, end) - удаляет указанный диапазон символов.
+        plan.delete(12, 22); // удаляем слово "разминка, "
+
+        // 5. deleteCharAt(index) - быстро удаляет ровно один символ.
+        plan.deleteCharAt(plan.length() - 1); // удаляем последнюю букву 'ь'
+
+        // 6. reverse() - переворачивает всю строку задом наперед.
+        // Очень часто нужно для алгоритмических задач на собеседованиях.
+        plan.reverse();
+        plan.reverse(); // Переворачиваем обратно для читаемости
+
+        // 7. length() - показывает текущее количество символов текста.
+        int len = plan.length();
+
+        // 8. capacity() - показывает текущую ВМЕСТИМОСТЬ внутреннего массива 
+        // (сколько символов туда влезет до того, как Java придется выделять новую память).
+        int cap = plan.capacity();
+
+        // 9. setLength(newLength) - обрезает строку до нужной длины.
+        // Если передать 0, это самый быстрый способ полностью очистить StringBuilder.
+        plan.setLength(12); // Оставит только "Тренировка: "
+
+        // 10. substring(start, end) - возвращает обычный неизменяемый String,
+        // вырезая кусок текста. Сам объект StringBuilder при этом НЕ МЕНЯЕТСЯ.
+        String firstWord = plan.substring(0, 10);
+    }
+}
+
+/**
+ * Демонстрация преобразования строковых типов.
+ * Практика #2.
+ *
+ * @author Влад
+ */
+public class StringConversions {
+
+    public static void main(String[] args) {
+        
+        // Исходная неизменяемая строка
+        String immutableStr = "Бассейн 25м";
+
+        // ==========================================
+        // 1. ИЗ String В StringBuilder / StringBuffer
+        // ==========================================
+        // Используем конструкторы классов-билдеров, передавая им обычную строку
+        StringBuilder builder = new StringBuilder(immutableStr);
+        StringBuffer buffer = new StringBuffer(immutableStr);
+
+        // ==========================================
+        // 2. ИЗ StringBuilder / StringBuffer В String
+        // ==========================================
+        // Вызываем метод toString(), который собирает и возвращает финальную строку
+        String finalStr1 = builder.toString();
+        String finalStr2 = buffer.toString();
+
+        // ==========================================
+        // 3. МЕЖДУ StringBuilder И StringBuffer
+        // ==========================================
+        // Напрямую они не преобразуются. 
+        // Нужно сначала превратить первый в String, а затем передать в конструктор второго.
+        
+        // builder -> buffer
+        StringBuffer newBuffer = new StringBuffer(builder.toString());
+        
+        // buffer -> builder
+        StringBuilder newBuilder = new StringBuilder(buffer.toString());
+    }
+}
