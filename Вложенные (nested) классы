@@ -1,0 +1,50 @@
+/**
+ * Демонстрация вложения статического класса в интерфейс.
+ * Практика #1 по вложенным классам.
+ *
+ * @author Влад
+ * @version 1.0
+ */
+public interface SwimResultProcessor {
+
+    /**
+     * Контракт интерфейса: метод, который нужно будет реализовать.
+     * @param result данные о результате заплыва
+     */
+    void process(Result result);
+
+    /**
+     * ВЛОЖЕННЫЙ КЛАСС.
+     * Он неявно является public и static, потому что находится в интерфейсе.
+     * Используется как удобный контейнер (DTO) для передачи данных.
+     */
+    class Result {
+        private String swimmerName;
+        private double timeSeconds;
+
+        public Result(String swimmerName, double timeSeconds) {
+            this.swimmerName = swimmerName;
+            this.timeSeconds = timeSeconds;
+        }
+
+        /**
+         * Метод вложенного класса.
+         */
+        public void printInfo() {
+            System.out.println("Пловец: " + swimmerName + ", Время: " + timeSeconds + " сек.");
+        }
+    }
+}
+
+// ====================================================================
+// Демонстрация вызова в другом классе
+// ====================================================================
+
+class NestedInterfaceDemo {
+
+    public static void main(String[] args) {
+        
+  
+        myResult.printInfo();
+    }
+}
