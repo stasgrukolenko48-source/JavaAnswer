@@ -1,0 +1,58 @@
+/**
+ * Пример создания собственного класса исключения.
+ * Наследуемся от Exception, что делает наше исключение проверяемым (checked).
+ * Практика #1.
+ *
+ * @author Влад
+ */
+public class InvalidSwimTimeException extends Exception {
+
+    // 1. Конструктор по умолчанию.
+    // Вызывается, если причина ошибки очевидна и дополнительные детали не нужны.
+    public InvalidSwimTimeException() {
+        super("Указано некорректное время заплыва.");
+    }
+
+    // 2. Конструктор со строковым сообщением.
+    // Самый популярный вариант. Позволяет передать конкретную причину ошибки.
+    public InvalidSwimTimeException(String message) {
+        super(message);
+    }
+
+    // 3. Конструктор с сообщением и причиной (другим исключением).
+    // Используется для "цепочки исключений" (exception chaining). 
+    // Позволяет обернуть пойманную системную ошибку в нашу бизнес-ошибку, 
+    // не потеряв при этом оригинальный стек вызовов (stack trace).
+    public InvalidSwimTimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+/**
+ * Демонстрация использования собственного исключения.
+ */
+public class CustomExceptionDemo {
+
+    /**
+     * Метод для валидации времени. 
+     * Так как InvalidSwimTimeException является проверяемым (наследуется от Exception),
+     * мы обязаны предупредить компилятор с помощью ключевого слова throws в сигнатуре метода.
+     */
+    public static void checkTime(double seconds) throws InvalidSwimTimeException {
+        if (seconds <= 0) {
+            // Генерируем наше собственное исключение, используя второй конструктор
+            throw new InvalidSwimTimeException("Время не может быть отрицательным или нулевым: " + seconds);
+        }
+        System.out.println("Время заплыва успешно записано: " + seconds + " сек.");
+    }
+
+    public static void main(String[] args) {
+        try {
+            // Пытаемся передать отрицательное время
+            checkTime(-5.5);
+            
+        } catch (InvalidSwimTimeException e) {
+            // Ловим именно наше специфическое исключение
+            System.out.println("Ошибка валидации данных: " + e.getMessage());
+        }
+    }
+}
