@@ -1,0 +1,42 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+/**
+ * Демонстрация чтения данных из файла с помощью Scanner.
+ * Практика #1.
+ *
+ * @author Влад
+ */
+public class ScannerFileDemo {
+
+    public static void main(String[] args) {
+        
+        // 1. Создаем объект файла, указывая путь к нему
+        File file = new File("training_plan.txt");
+
+        // 2. Оборачиваем создание сканера в try-with-resources.
+        // Scanner реализует интерфейс AutoCloseable (под капотом он использует потоки ввода), 
+        // поэтому мы обязаны его закрывать. Эта конструкция сделает всё автоматически.
+        try (Scanner scanner = new Scanner(file)) {
+            
+            System.out.println("Чтение плана тренировок из файла:");
+
+            // 3. Читаем файл до тех пор, пока в нем есть следующие строки
+            while (scanner.hasNextLine()) {
+                
+                // Читаем строку целиком
+                String line = scanner.nextLine();
+                System.out.println(line);
+                
+                // Примечание: если бы в файле были записаны только числа, 
+                // мы могли бы использовать scanner.hasNextInt() и scanner.nextInt()
+            }
+
+        } catch (FileNotFoundException e) {
+            // Если файла training_plan.txt не окажется в папке с проектом,
+            // программа не упадет, а аккуратно выведет это сообщение.
+            System.out.println("Ошибка: Файл не найден на диске.");
+        }
+    }
+}
