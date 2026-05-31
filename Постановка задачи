@@ -1,0 +1,219 @@
+import java.io.*;
+import java.util.*;
+
+/**
+ * Программная реализация алгоритма кодирования Хаффмана.
+ * Поддерживает работу с любыми бинарными и текстовыми файлами.
+ */
+public class Huffman {
+
+    // Узел дерева Хаффмана
+    static class Node implements Comparable<Node> {
+        Byte symbol; // Символ (байт), null для внутренних узлов
+        int freq;    // Частота встречаемости
+        Node left, right;
+
+        Node(Byte symbol, int freq) {
+            this.symbol = symbol;
+            this.freq = freq;
+        }
+
+        Node(Node left, Node right) {
+            this.symbol = null;
+            this.freq = left.freq + right.freq;
+            this.left = left;
+            this.right = right;
+        }
+
+        // Для сортировки в очереди с приоритетом (от меньшей частоты к большей)
+        @Override
+        public int compareTo(Node other) {
+            return Integer.compare(this.freq, other.freq);
+        }
+    }
+
+    public static void main(String[] args) {
+        if (args.length != 3) {
+            System.out.println("Использование:");
+            System.out.println("  Кодирование:   java Huffman -e <входной_файл> <закодированный_файл>");
+            System.out.println("  Декодирование: java Huffman -d <закодированный_файл> <раскодированный_файл>");
+            return;
+        }
+
+        String mode = args[0];
+        String inputFile = args[1];
+        String outputFile = args[2];
+
+        try {
+            if ("-e".equals(mode)) {
+                encode(inputFile, outputFile);
+                System.out.println("Файл успешно закодирован: " + outputFile);
+            } else if ("-d".equals(mode)) {
+                decode(inputFile, outputFile);
+                System.out.println("Файл успешно декодирован: " + outputFile);
+            } else {
+                System.out.println("Неизвестный режим. Используйте -e или -d.");
+            }
+        } catch (IOException e) {
+            System.err.println("Ошибка при работе с файлами: " + e.getMessage());
+        }
+    }
+
+    // ================= КОДИРОВАНИЕ =================
+
+    private static void encode(String inputFile, String outputFile) throws IOException {
+        // 1. Читаем весь файл в массив байт
+        File file = new File(inputFile);
+        byte[] data = new byte[(int) file.length()];
+        try (FileInputStream fis = new FileInputStream(file)) {
+            fis.read(data);
+        }
+
+        if (data.length == 0) {
+            new FileOutputStream(outputFile).close(); // Пустой файл
+            return;
+        }
+
+        // 2. Считаем частоты байт
+        Map<Byte, Integer> freqs = new HashMap<>();
+        for (byte b : data) {
+            freqs.put(b, freqs.getOrDefault(b, 0) + 1);
+        }
+
+        // 3. Строим дерево и генерируем коды
+        Node root = buildTree(freqs);
+        Map<Byte, String> codes = new HashMap<>();
+        generateCodes(root, "", codes);
+
+        // 4. Записываем результат
+        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(outputFile))) {
+            // Пишем заголовок (Словарь)
+            dos.writeInt(freqs.size()); // Количество уникальных байт
+            for (Map.Entry<Byte, Integer> entry : freqs.entrySet()) {
+                dos.writeByte(entry.getKey());
+                dos.writeInt(entry.getValue());
+            }
+
+            // Пишем длину исходного файла (нужно для точной остановки при декодировании)
+            dos.writeInt(data.length);
+
+            // Пишем закодированные биты
+            int currentByte = 0;
+            int numBits = 0;
+
+            for (byte b : data) {
+                String code = codes.get(b);
+                for (char c : code.toCharArray()) {
+                    currentByte = (currentByte << 1) | (c - '0');
+                    numBits++;
+                    if (numBits == 8) { // Если накопили 8 бит - сбрасываем в файл
+                        dos.writeByte(currentByte);
+                        currentByte = 0;
+                        numBits = 0;
+                    }
+                }
+            }
+            // Дописываем оставшиеся биты, сдвигая их влево (padding)
+            if (numBits > 0) {
+                currentByte = currentByte << (8 - numBits);
+                dos.writeByte(currentByte);
+            }
+        }
+    }
+
+    // ================= ДЕКОДИРОВАНИЕ =================
+
+    private static void decode(String inputFile, String outputFile) throws IOException {
+        try (DataInputStream dis = new DataInputStream(new FileInputStream(inputFile));
+             FileOutputStream fos = new FileOutputStream(outputFile)) {
+
+            // 1. Читаем заголовок (Словарь)
+            int mapSize;
+            try {
+                mapSize = dis.readInt();
+            } catch (EOFException e) {
+                return; // Файл пуст
+            }
+
+            Map<Byte, Integer> freqs = new HashMap<>();
+            for (int i = 0; iዚህ; i < mapSize; i++) {
+                byte b = dis.readByte();
+                int freq = dis.readInt();
+                freqs.put(b, freq);
+            }
+
+            // Читаем количество исходных байт
+            int totalBytes = dis.readInt();
+
+            // 2. Восстанавливаем дерево
+            Node root = buildTree(freqs);
+
+            // 3. Читаем биты и спускаемся по дереву
+            Node current = root;
+            int bytesWritten = 0;
+
+            // Обработка случая, когда в файле был только 1 уникальный символ
+            if (root.left == null && root.right == null) {
+                for (int i = 0; i < totalBytes; i++) {
+                    fos.write(root.symbol);
+                }
+                return;
+            }
+
+            while (bytesWritten < totalBytes) {
+                int currentByte = dis.readUnsignedByte();
+                for (int i = 7; i >= 0; i--) {
+                    int bit = (currentByte >> i) & 1;
+                    if (bit == 0) {
+                        current = current.left;
+                    } else {
+                        current = current.right;
+                    }
+
+                    if (current.symbol != null) { // Дошли до листа
+                        fos.write(current.symbol);
+                        bytesWritten++;
+                        current = root; // Возвращаемся в корень
+                        if (bytesWritten == totalBytes) {
+                            break; // Закончили декодирование
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // ================= ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ =================
+
+    // Построение дерева Хаффмана
+    private static Node buildTree(Map<Byte, Integer> freqs) {
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        for (Map.Entry<Byte, Integer> entry : freqs.entrySet()) {
+            pq.add(new Node(entry.getKey(), entry.getValue()));
+        }
+
+        // Если в файле только один уникальный символ
+        if (pq.size() == 1) {
+            pq.add(new Node((byte)0, 0)); // Добавляем фиктивный узел
+        }
+
+        while (pq.size() > 1) {
+            Node left = pq.poll();
+            Node right = pq.poll();
+            pq.add(new Node(left, right));
+        }
+
+        return pq.poll();
+    }
+
+    // Рекурсивный обход дерева для получения префиксных кодов
+    private static void generateCodes(Node node, String code, Map<Byte, String> codes) {
+        if (node == null) return;
+        if (node.symbol != null) {
+            codes.put(node.symbol, code);
+        } else {
+            generateCodes(node.left, code + "0", codes);
+            generateCodes(node.right, code + "1", codes);
+        }
+    }
+}
