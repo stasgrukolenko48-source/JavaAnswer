@@ -1,0 +1,204 @@
+Файл 1
+// общая концепция сотрудника
+abstract class Employee {
+    private String name;
+    private int id;
+
+    public Employee(String name, int id) {
+        this.name = name;
+        this.id = id;
+    }
+
+    public void displayInfo() {
+        System.out.println("ID: " + id + ", Имя: " + name);
+    }
+
+
+    public abstract double calculateSalary();
+}
+
+
+class FullTimeEmployee extends Employee {
+    private double monthlySalary;
+
+    public FullTimeEmployee(String name, int id, double monthlySalary) {
+        super(name, id); // Вызов конструктора абстрактного класса
+        this.monthlySalary = monthlySalary;
+    }
+
+    @Override
+    public double calculateSalary() {
+        return monthlySalary;
+    }
+}
+
+class ContractEmployee extends Employee {
+    private double hourlyRate;
+    private int hoursWorked;
+
+    public ContractEmployee(String name, int id, double hourlyRate, int hoursWorked) {
+        super(name, id);
+        this.hourlyRate = hourlyRate;
+        this.hoursWorked = hoursWorked;
+    }
+
+    @Override
+    public double calculateSalary() {
+        return hourlyRate * hoursWorked;
+    }
+}
+
+
+public class Company {
+    public static void main(String[] args) {
+
+        Employee emp1 = new FullTimeEmployee("Алексей", 101, 80000);
+        Employee emp2 = new ContractEmployee("Мария", 102, 500, 160);
+
+        Employee[] staff = {emp1, emp2};
+
+        for (Employee e : staff) {
+            e.displayInfo();
+            System.out.println("Зарплата: " + e.calculateSalary());
+            System.out.println("---");
+        }
+
+
+
+      Employee specialTaskWorker = new Employee("Инкогнито", 999) {
+            private double bonus = 5000.0;
+
+            @Override
+            public double calculateSalary() {
+                return 25000.0 + bonus;
+            }
+            
+            @Override
+            public void displayInfo() {
+                super.displayInfo();
+                System.out.println("Статус: Секретный сотрудник");
+            }
+        };
+
+        specialTaskWorker.displayInfo();
+        System.out.println("Зарплата: " + specialTaskWorker.calculateSalary());
+    }
+
+}
+
+
+Файл 2
+// Первый интерфейс с приватным методом
+interface Messaging {
+    // Default-метод, доступный классу-реализатору
+    default void sendMessage(String message) {
+        logAction("Sending"); // Вызов приватного метода
+        System.out.println("Сообщение: " + message);
+    }
+
+    // Приватный метод интерфейса (Java 9+)
+    // Нужен для внутренней логики интерфейса, не виден снаружи
+    private void logAction(String action) {
+        System.out.println("[LOG] Действие: " + action);
+    }
+}
+
+// Второй интерфейс
+interface Encryption {
+    default void encryptData() {
+        System.out.println("Шифрование данных...");
+    }
+}
+
+// Класс, реализующий множественное наследование интерфейсов
+class SecureMessenger implements Messaging, Encryption {
+    public void run() {
+        encryptData();     // Метод из Encryption
+        sendMessage("Привет!"); // Метод из Messaging
+    }
+}
+
+// Тестирование
+public class Main {
+    public static void main(String[] args) {
+        SecureMessenger messenger = new SecureMessenger();
+        messenger.run();
+    }
+}
+
+Файл 3
+package main;
+public class Program {
+    public static void mainn(String[] args) {
+        // Java сама найдет класс SwimWork в этой же папке
+        SwimWork myTrain = new SwimWork("Брасс", 1000); 
+        
+        myTrain.startWarmup();
+        System.out.println("Эта тренировка сложная? " + myTrain.isHard);
+    }
+    public static void main(String[] args) {
+        SwimWork train = new SwimWork("Кроль", 1500);
+
+        // 1. PUBLIC — Сработает без проблем
+        System.out.println("Тренер: " + train.coachName);
+
+        // 2. DEFAULT — Сработает, так как файлы в одной папке
+        System.out.println("Людей в бассейне: " + train.swimmersCount);
+
+        // 3. PROTECTED — Сработает (мы в одном пакете)
+        System.out.println("Лицензия бассейна: " + train.poolLicense);
+
+        // 4. PRIVATE — ВНИМАНИЕ! Эта строчка вызовет КРАСНУЮ ОШИБКУ
+        // System.out.println(train.coachSalary); 
+        
+        // А так — сработает (через геттер)
+        System.out.println("Зарплата через геттер: " + train.getSalary());
+    }
+}
+Файл 4
+package main;
+public class SwimWork {
+    public String coachName = "Влад";      // PUBLIC: Видят все (и клиенты, и другие залы)
+    private double coachSalary = 50000.0;  // PRIVATE: Видит только этот класс (инкапсуляция)
+    protected String poolLicense = "A105"; // PROTECTED: Видят только "свои" и наследники
+    int swimmersCount = 15;                // DEFAULT (пакетный): Видят все в этой папке
+    
+    String style;
+    int distance;
+    boolean isHard;
+
+    public SwimWork(String style, int distance) {
+        this.style = style;
+        this.distance = distance;
+        this.isHard = distance > 2000;
+    }
+
+    void startWarmup() {
+        System.out.println("Начинаем разминку для стиля " + style);
+    }
+    public double getSalary() {
+        return coachSalary;
+    }
+}
+ Файл 5
+package main;
+import transport.Vehicle;
+
+public class Truck extends Vehicle { // Наследуемся от класса из другого пакета
+    void checkStats() {
+        System.out.println(model); // OK (public)
+        System.out.println(speed); // OK! Сработало, так как Truck — НАСЛЕДНИК (protected)
+        
+        // System.out.println(year); // ОШИБКА! Default не виден даже наследникам в другом пакете
+    }
+}
+
+Файл 6
+package transport; // Указываем, что класс принадлежит этому пакету
+
+public class Vehicle {
+    public String model = "Tesla";       // Виден везде
+    protected int speed = 120;           // Виден в этом пакете + наследникам
+    int year = 2024;                     // DEFAULT: Виден ТОЛЬКО в пакете transport
+    private String vin = "AX123";        // Виден ТОЛЬКО в этом классе
+}
